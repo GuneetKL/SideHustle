@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job</title>
+    <style>
+       
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: black;
+        }
+
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+            top: 0; 
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .companyinfo {
+            text-align: left;
+            color: #fff;
+        }
+        .name {
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+            color: #fff;
+        }
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .form-container input,
+        .form-container textarea,
+        .form-container select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-container button {
+            background-color: #ff9900;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-container button:hover {
+            background-color: #e68a00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="a.png" alt="Side Hustle Logo">
+            <div class="companyinfo">
+                <h1 class="name">Side Hustle</h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+    </header>
+    <div class="form-container">
+        <h2>Apply for Job</h2>
+        <form id="applicationForm">
+            <input type="hidden" id="jobId" name="jobId"> 
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="linkedin">LinkedIn Profile:</label>
+            <input type="url" id="linkedin" name="linkedin">
+
+            <label for="references">References:</label>
+            <textarea id="references" name="references" placeholder="Enter references' phone numbers of previous employers"></textarea>
+
+            <label for="availability">Availability Confirmation:</label>
+            <select id="availability" name="availability" required>
+                <option value="">Select</option>
+                <option value="Available">Available</option>
+                <option value="Not Available">Not Available</option>
+            </select>
+
+            <label for="paymentMode">Payment Mode:</label>
+            <select id="paymentMode" name="paymentMode" required>
+                <option value="">Select</option>
+                <option value="Card">Card</option>
+                <option value="Cash">Cash</option>
+            </select>
+
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId'); 
+
+        
+        document.getElementById('jobId').value = jobId;
+
+        const applicationForm = document.getElementById('applicationForm');
+        applicationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(applicationForm);
+            const applicantData = {};
+            for (const [key, value] of formData.entries()) {
+                applicantData[key] = value;
+            }
+            const user = firebase.auth().currentUser;
+            if (user) {
+               
+                applicantData.jobId = jobId;
+                applicantData.userId = user.uid;
+                try {
+                    await db.collection("applications").add(applicantData);
+                    console.log("Application submitted successfully!");
+                    alert("Application submitted successfully!");
+                    applicationForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    alert("An error occurred. Please try again later.");
+                }
+            } else {
+                console.error("User not signed in");
+               
+            }
+        });
+    </script>
+</body>
+</html>
