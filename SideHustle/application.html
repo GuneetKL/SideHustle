@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Applicants</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-storage-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: #fff;
+        }
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .company {
+            text-align: left;
+            color: #fff;
+        }
+        .name {
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+            color: #fff;
+        }
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        main {
+            padding-top: 100px; 
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #fff;
+            padding: 8px;
+        }
+        th {
+            background-color: #333;
+        }
+        td {
+            background-color: #555;
+        }
+        .chat-icon {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Images\a.png" alt="Side Hustle Logo">
+            <div class="company">
+                <h1 class="name">Side Hustle</h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <h1>Job Applicants</h1>
+        <div id="applicantsTable"></div>
+    </main>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+      
+        const db = firebase.firestore();
+
+       
+        const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('jobId');
+    const userId = urlParams.get('userId');
+
+    const applicantsTable = document.getElementById('applicantsTable');
+
+    db.collection("applications").where("jobId", "==", jobId).get()
+        .then(querySnapshot => {
+            if (querySnapshot.empty) {
+                applicantsTable.innerHTML = '<p>No applicants found for this job.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            const headerRow = table.insertRow();
+            const headers = ['Name', 'Phone', 'Address', 'Availability', 'LinkedIn', 'Payment Mode', 'Resume', 'Chat'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            querySnapshot.forEach(doc => {
+                const applicationData = doc.data();
+                const row = table.insertRow();
+                ['fullName', 'phoneNumber', 'address', 'availability', 'linkedin', 'paymentMode'].forEach(fieldName => {
+                    const cell = row.insertCell();
+                    cell.textContent = applicationData[fieldName] || '-';
+                });
+
+                const resumeURL = applicationData.resumeURL;
+                const resumeCell = row.insertCell();
+                if (resumeURL) {
+                    const resumeLink = document.createElement('a');
+                    resumeLink.href = resumeURL;
+                    resumeLink.textContent = 'View';
+                    resumeLink.target = '_blank';
+                    resumeCell.appendChild(resumeLink);
+                } else {
+                    resumeCell.textContent = 'No resume available';
+                }
+
+                const chatCell = row.insertCell();
+                const chatIcon = document.createElement('span');
+                chatIcon.textContent = '💬';
+                chatIcon.classList.add('chat-icon');
+                chatIcon.addEventListener('click', async () => {
+                   
+                    const applicantId = doc.id;
+                    const applicantSnapshot = await db.collection("applications").doc(applicantId).get();
+                    if (applicantSnapshot.exists) {
+                        const applicantUserId = applicantSnapshot.data().userId;
+                      
+                        window.location.href = `chat2.html?jobId=${jobId}&userId=${userId}&applicantId=${applicantId}&applicantUserId=${applicantUserId}`;
+                    } else {
+                        console.error("Applicant document not found");
+                    }
+                });
+                chatCell.appendChild(chatIcon);
+            });
+
+            applicantsTable.appendChild(table);
+        })
+        .catch(error => {
+            console.error("Error getting applications: ", error);
+            applicantsTable.innerHTML = '<p>An error occurred while fetching applicants.</p>';
+        });
+    </script>
+</body>
+</html>

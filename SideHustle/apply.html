@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job</title>
+    <style>
+       
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: black;
+        }
+
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+            top: 0; 
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .companyinfo {
+            text-align: left;
+            color: #fff;
+        }
+        .name {
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+            color: #fff;
+        }
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .form-container input,
+        .form-container textarea,
+        .form-container select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-container button {
+            background-color: #ff9900;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-container button:hover {
+            background-color: #e68a00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Images\a.png" alt="Side Hustle Logo">
+            <div class="companyinfo">
+                <h1 class="name">Side Hustle</h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+    </header>
+    <div class="form-container">
+        <h2>Apply for Job</h2>
+        <form id="applicationForm">
+            <input type="hidden" id="jobId" name="jobId"> 
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="linkedin">LinkedIn Profile:</label>
+            <input type="url" id="linkedin" name="linkedin">
+
+            <label for="references">References:</label>
+            <textarea id="references" name="references" placeholder="Enter references and phone numbers of previous employers"></textarea>
+
+            <label for="availability">Availability Confirmation:</label>
+            <select id="availability" name="availability" required>
+                <option value="">Select</option>
+                <option value="Available">Available</option>
+                <option value="Not Available">Not Available</option>
+            </select>
+
+            <label for="paymentMode">Payment Mode:</label>
+            <select id="paymentMode" name="paymentMode" required>
+                <option value="">Select</option>
+                <option value="Interac">Interac</option>
+                <option value="Cash">Cash</option>
+            </select>
+            <label for="resume">Resume</label>
+            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx">
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-storage-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        const applicationForm = document.getElementById('applicationForm');
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+        
+        const userId = urlParams.get('userId');
+
+        applicationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(applicationForm);
+            const applicantData = {};
+            for (const [key, value] of formData.entries()) {
+                if (key !== 'resume') { 
+                    applicantData[key] = value;
+                }
+            }
+
+          
+            applicantData.jobId = jobId;
+            applicantData.userId = userId;
+
+            
+            const resumeFile = document.getElementById('resume').files[0];
+            const resumeRef = storage.ref().child('resumes/' + resumeFile.name);
+            try {
+                
+                const snapshot = await resumeRef.put(resumeFile);
+                const resumeURL = await snapshot.ref.getDownloadURL();
+                
+                
+                applicantData.resumeURL = resumeURL;
+
+               
+                await db.collection("applications").add(applicantData);
+
+               
+                applicationForm.reset();
+
+                
+                console.log("Application submitted successfully!");
+                alert("Application submitted successfully!");
+            } catch (error) {
+                console.error("Error submitting application: ", error);
+                alert("An error occurred while submitting the application. Please try again later.");
+            }
+        });
+    </script>
+</body>
+</html>

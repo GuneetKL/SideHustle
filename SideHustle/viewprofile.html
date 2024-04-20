@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: #fff;
+        }
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+            top: 0;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .company {
+            text-align: left;
+            color: #fff;
+        }
+        .name {
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+            color: #fff;
+        }
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        main {
+            padding-top: 100px; 
+        }
+        .profile-details {
+            margin-top: 50px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-details h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .profile-details p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: black;
+            color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Images/a.png" alt="Side Hustle Logo">
+            <div class="company">
+                <h1 class="name">Side Hustle</h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+        <button class="logout-button" onclick="location.href='Index.html'">
+            <span class="fa fa-sign-out"></span> 
+        </button>
+    </header>
+    <main>
+        <div class="profile-details">
+            <h2>User Profile</h2>
+            <div id="userDetails"></div>
+            <button onclick="editUserInfo()">Edit Profile</button>
+        </div>
+    </main>
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit User Information</h2>
+            <form id="editForm">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required><br>
+
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required><br>
+
+                <label for="companyName">Company Name:</label>
+                <input type="text" id="companyName" name="companyName" required><br>
+
+                <label for="emailAddress">Email Address:</label>
+                <input type="email" id="emailAddress" name="emailAddress" required><br>
+
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required><br>
+
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required><br>
+
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.firestore();
+
+        window.addEventListener('load', () => {
+            const userId = getUserIdFromUrl();
+            getUserDetails(userId);
+        });
+
+        function getUserIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('userId');
+        }
+
+        function getUserDetails(userId) {
+            db.collection('users').doc(userId).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    displayUserDetails(userData);
+                } else {
+                    console.log('No such document!');
+                }
+            })
+            .catch((error) => {
+                console.error('Error getting document:', error);
+            });
+        }
+
+        function displayUserDetails(userData) {
+            const userDetailsContainer = document.getElementById('userDetails');
+            userDetailsContainer.innerHTML = `
+                <p><strong>Full Name:</strong> ${userData.fullName}</p>
+                <p><strong>Phone Number:</strong> ${userData.phoneNumber}</p>
+                <p><strong>Company Name:</strong> ${userData.companyName}</p>
+                <p><strong>Email Address:</strong> ${userData.emailAddress}</p>
+                <p><strong>Age:</strong> ${userData.age}</p>
+                <p><strong>Date of Birth:</strong> ${userData.dob}</p>
+            `;
+        }
+
+        function editUserInfo() {
+            const userDetailsContainer = document.getElementById('userDetails');
+            const fullName = userDetailsContainer.querySelector('p:nth-of-type(1)').textContent.split(': ')[1];
+            const phoneNumber = userDetailsContainer.querySelector('p:nth-of-type(2)').textContent.split(': ')[1];
+            const companyName = userDetailsContainer.querySelector('p:nth-of-type(3)').textContent.split(': ')[1];
+            const emailAddress = userDetailsContainer.querySelector('p:nth-of-type(4)').textContent.split(': ')[1];
+            const age = userDetailsContainer.querySelector('p:nth-of-type(5)').textContent.split(': ')[1];
+            const dob = userDetailsContainer.querySelector('p:nth-of-type(6)').textContent.split(': ')[1];
+
+            document.getElementById('fullName').value = fullName;
+            document.getElementById('phoneNumber').value = phoneNumber;
+            document.getElementById('companyName').value = companyName;
+            document.getElementById('emailAddress').value = emailAddress;
+            document.getElementById('age').value = age;
+            document.getElementById('dob').value = dob;
+
+            const editModal = document.getElementById('editModal');
+            editModal.style.display = 'block';
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const updatedUserInfo = {
+                userId: getUserIdFromUrl(),
+                fullName: document.getElementById('fullName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                companyName: document.getElementById('companyName').value,
+                emailAddress: document.getElementById('emailAddress').value,
+                age: document.getElementById('age').value,
+                dob: document.getElementById('dob').value
+            };
+
+            db.collection('users').doc(updatedUserInfo.userId).set(updatedUserInfo)
+            .then(() => {
+                console.log('User information updated successfully with ID: ', updatedUserInfo.userId);
+                displayUserDetails(updatedUserInfo);
+                closeEditModal();
+            })
+            .catch((error) => {
+                console.error('Error updating user information:', error);
+            });
+        });
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+

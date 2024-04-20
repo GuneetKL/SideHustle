@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Side Hustle - Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black; 
+            color: black;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+            top: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+
+        .company {
+            text-align: left;
+        }
+
+        .name {
+            font-size: 24px;
+            margin: 0;
+            color :white;
+            font-weight: bold; 
+        }
+
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        main {
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white; 
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            color: black; 
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            color: black; 
+        }
+
+        button {
+            padding: 12px 0;
+            background-color: orange;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e68a00;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login a {
+            color: #ff9900;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Images\a.png" alt="Side Hustle Logo">
+            <div class="company">
+                <h1 class="name"><strong>Side Hustle</strong></h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+    </header>
+   
+    <main>
+        <div class="container">
+            <h1>Sign Up</h1>
+            <form id="signupForm">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <div class="login">
+                Already have an account? <a href="Index.html">Log in</a>
+            </div>
+            <p id="confirmationMessage" style="display: none; color: green;">Registration successful!</p>
+        </div>
+    </main>
+
+   
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js';
+
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+    
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+    
+        
+        const signupForm = document.getElementById('signupForm');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            const email = signupForm['email'].value;
+            const password = signupForm['password'].value;
+    
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                
+                const user = userCredential.user;
+                console.log('User signed up:', user);
+                confirmationMessage.style.display = 'block'; 
+                signupForm.reset(); 
+            } catch (error) {
+                
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error('Signup error:', errorCode, errorMessage);
+                
+            }
+        });
+    </script>
+</body>
+</html>

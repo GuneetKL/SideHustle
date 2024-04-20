@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Side Hustle - On-Call Job Hunting Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000; 
+            color: #fff; 
+        }
+        header {
+            background-color: #333;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            max-width: 100px; 
+            margin-right: 20px;
+        }
+        .company {
+            text-align: left;
+            color: #fff;
+        }
+        .name {
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0;
+            font-weight: 700;
+            color: #fff; 
+        }
+        .tag {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #ff9900;
+        }
+        main {
+            padding-top: 200px;
+            text-align: center;
+        }
+        section {
+            padding: 50px 20px;
+        }
+        h1, h2, h3 {
+            margin: 0;
+            color: #fff;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+      
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            color: #000; 
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: calc(100% - 22px); 
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button {
+            width: calc(100% - 22px); 
+            padding: 12px 0;
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button:hover {
+            background-color: #e68a00;
+        }
+        #contact {
+            background-color: #333;
+            color: #fff;
+        }
+        #contact p {
+            font-size: 16px;
+        }
+        #contact a {
+            color: #ff9900;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        #contact a:hover {
+            color: #e68a00;
+        }
+        .slider {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 50px;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slide {
+            width: 600%;
+            max-height: 700px; 
+            overflow: hidden;
+        }
+        .slide img {
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+        }
+        .ab {
+            background-color: #black;
+            padding: 50px 20px;
+            color: #white; 
+        }
+        .ab img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Images\a.png" alt="Side Hustle Logo">
+            <div class="company">
+                <h1 class="name">Side Hustle</h1>
+                <div class="tag">Seize opportunities anytime, anywhere.</div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="move">
+            <div class="slider">
+                <div class="slides">
+                    <div class="slide"><img src="Images\1.jpg" alt=" 1"></div>
+                    <div class="slide"><img src="Images\2.jpg" alt=" 2"></div>
+                    <div class="slide"><img src="Images\3.jpg" alt=" 3"></div>
+                    <div class="slide"><img src="Images\4.png" alt=" 4"></div>
+                    <div class="slide"><img src="Images\6.jpg" alt=" 5"></div>
+                    <div class="slide"><img src="Images\8.jpg" alt=" 6"></div>
+                    <div class="slide"><img src="Images\7.jpg" alt="7"></div>
+                    <div class="slide"><img src="Images\9.jpg" alt="8"></div>
+                    <div class="slide"><img src="Images\10.jpg" alt="9"></div>
+                </div>
+            </div>
+        </section>
+        <section id="signup">
+            <h2>Log In</h2>
+            <form id="loginForm">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <button type="submit">Log In</button>
+            </form>
+            <p>Don't have an account? <a href="register.html">Create one</a></p> 
+        </section>
+        <section class="ab">
+            <h2>About Us</h2>
+            <p><i>Your go-to platform for on-the-go job connections. Employers post same-day gigs, while job seekers filter and apply with ease, ensuring a seamless match for immediate work opportunities.</i></p>
+            <img src="Images\side-hustle-scaled.jpg" alt="side">
+        </section>
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Email: <a href="mailto:siona@sidehustle.com">siona@sidehustle.com</a></p>
+        </section>
+    </main>
+   
+   
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const slider = document.querySelector('.slides');
+
+        let currentIndex = 0;
+        let slideWidth = slides[currentIndex].clientWidth;
+
+        function slide() {
+            currentIndex++;
+
+            if (currentIndex >= slides.length) {
+                currentIndex = 0;
+            }
+
+            slider.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+        }
+
+        setInterval(slide, 5000); 
+    </script>
+   
+    <script>
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyChxSMt3O-BJq10yolEC9FQo6FUmtvHVnQ",
+            authDomain: "sidehustle-a2b7d.firebaseapp.com",
+            projectId: "sidehustle-a2b7d",
+            storageBucket: "sidehustle-a2b7d.appspot.com",
+            messagingSenderId: "419589453590",
+            appId: "1:419589453590:web:15fce53f01750d6ab2c237",
+            measurementId: "G-J8E1HPMGDB"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = loginForm['email'].value;
+            const password = loginForm['password'].value;
+
+            try {
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                console.log('User logged in:', user);
+
+                window.location.href = `dashboard.html?userId=${user.uid}`;
+            } catch (error) {
+                console.error('Login error:', error.code, error.message);
+                alert('Failed to log in. Please check your credentials.');
+            }
+        });
+    </script>
+</body>
+</html>
